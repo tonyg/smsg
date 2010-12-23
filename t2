@@ -1,4 +1,0 @@
-(subscribe! t2 #f #f t2 req1)
-(post! q1 (subscribe! #f t2 a t2 req2) #f)
-(post! q1 (post! #f message1 #f) #f)
-(post! q1 (post! #f message2 #f) #f)
