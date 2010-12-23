@@ -7,7 +7,7 @@
 
 (define k (half-queue 'k))
 
-(client (list 'server 'test3 "localhost" 5671))
+(client 'server 'test3 "localhost" 5671)
 (post! 'server 'factory `(create! queue q1 test3 k))
 (write (k)) (newline)
 

@@ -7,7 +7,7 @@
 (define k (half-queue 'k))
 (define c (half-queue 'consumer))
 
-(client (list 'server 'test1 "localhost" 5671))
+(client 'server 'test1 "localhost" 5671)
 (post! 'server 'factory `(create! queue q1 test1 k))
 (write (k)) (newline)
 (post! 'server 'q1 `(subscribe! #f test1 consumer test1 k))
