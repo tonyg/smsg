@@ -2,7 +2,7 @@
 
 (require "infra.rkt")
 (require "directory.rkt")
-(require "client.rkt")
+(require "network.rkt")
 (require "half-queue.rkt")
 
 (define k (half-queue 'k))

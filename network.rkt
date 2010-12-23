@@ -4,7 +4,7 @@
 (require "directory.rkt")
 (require "factory.rkt")
 
-(provide relay serve-on-port)
+(provide relay serve-on-port client)
 
 ;; relay : input-port output-port (maybe symbol) (maybe symbol) -> node-fn
 (define (relay in out localname remotename)
@@ -66,3 +66,13 @@
 	(write `(accepted-connection ,portnumber)) (newline)
 	(relay in out #f #f)
         (loop)))))
+
+(define (client localname remotename hostname portnumber)
+  (let-values (((in out) (tcp-connect hostname portnumber)))
+    (write `(connected ,hostname ,portnumber)) (newline)
+    (relay in out localname remotename)))
+
+(register-object-class! 'client
+			(match-lambda
+			 [`(,localname ,remotename ,hostname ,portnumber)
+			  (client localname remotename hostname portnumber)]))

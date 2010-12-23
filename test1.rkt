@@ -1,7 +1,7 @@
 #lang racket
 
 (require "infra.rkt")
-(require "client.rkt")
+(require "network.rkt")
 (require "half-queue.rkt")
 
 (define k (half-queue 'k))
