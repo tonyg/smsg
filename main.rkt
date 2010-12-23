@@ -1,7 +1,7 @@
 #lang racket
 
-(require "server.rkt")
+(require "network.rkt")
 (require "directory.rkt")
 (require "queue.rkt")
 
-(server 5671)
+(serve-on-port 5671)

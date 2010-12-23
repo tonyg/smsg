@@ -4,7 +4,7 @@
 (require "directory.rkt")
 (require "factory.rkt")
 
-(provide relay)
+(provide relay serve-on-port)
 
 ;; relay : input-port output-port (maybe symbol) (maybe symbol) -> node-fn
 (define (relay in out localname remotename)
@@ -57,3 +57,12 @@
 		(send! name body)]
 	       [_ (report! `(illegal-command ,command))])
 	     #t)))
+
+(define (serve-on-port portnumber)
+  (let ((server-sock (tcp-listen portnumber 5 #t)))
+    (write `(listening on ,portnumber)) (newline)
+    (let loop ()
+      (let-values (((in out) (tcp-accept server-sock)))
+	(write `(accepted-connection ,portnumber)) (newline)
+	(relay in out #f #f)
+        (loop)))))
