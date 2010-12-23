@@ -1,6 +1,5 @@
 #lang racket
 
-(require "log.rkt")
 (require "xqueue.rkt")
 (require "infra.rkt")
 (require "directory.rkt")

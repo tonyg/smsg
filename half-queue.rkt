@@ -2,7 +2,6 @@
 
 (require racket/async-channel)
 
-(require "log.rkt")
 (require "xqueue.rkt")
 (require "infra.rkt")
 (require "directory.rkt")

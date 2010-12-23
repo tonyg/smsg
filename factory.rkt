@@ -1,6 +1,5 @@
 #lang racket
 
-(require "log.rkt")
 (require "infra.rkt")
 (require "directory.rkt")
 
