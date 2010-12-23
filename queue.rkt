@@ -29,7 +29,6 @@
 
   (define (shovel)
     (semaphore-wait mutex)
-    (write `(state ,qname ,(queue-empty? backlog) ,(queue-empty? waiters)))(newline)
     (if (queue-empty? backlog)
         (wait-and-shovel)
         (let ((body (dequeue! backlog))
@@ -74,9 +73,7 @@
        mutex
        (lambda ()
 	 (let ((token (hash-ref subscriptions id (lambda () #f))))
-	   (write `(found ,id ,token))(newline)
 	   (when token
-	     (write `(unsubbing ,id ,token))(newline)
 	     (hash-remove! subscriptions id)
 	     (set-box! token #f)))))]))
 

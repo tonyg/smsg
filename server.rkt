@@ -19,7 +19,7 @@
 
 (define (serve in out)
   (define (route message)
-    (write `(relaying upstream ,message))(newline)
+    ;;(write `(relaying upstream ,message))(newline)
     (write message out)
     (newline out))
 
@@ -27,7 +27,7 @@
   (file-stream-buffer-mode out 'line)
   (let loop ()
     (let ((command (read in)))
-      (write `(received ,command))(newline)
+      ;;(write `(received from client ,command))(newline)
       (if (eof-object? command)
           (begin (close-output-port out)
                  (close-input-port in)
