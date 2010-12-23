@@ -1,0 +1,3 @@
+(subscribe! t1 #f #f t1 req1)
+(post! factory (create! queue q1 t1 req2) #f)
+(post! q1 (subscribe! #f t1 a t1 req3) #f)
