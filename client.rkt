@@ -4,6 +4,7 @@
 (require "infra.rkt")
 (require "directory.rkt")
 (require "factory.rkt")
+(require "network.rkt")
 
 (provide client)
 
@@ -29,26 +30,8 @@
 	       (let loop ()
 		 (let ((command (read in)))
 		   ;;(write `(received from server ,command))(newline)
-		   (if (eof-object? command)
-		       (begin (close-output-port out)
-			      (close-input-port in)
-			      'done)
-		       (begin (match command
-				[`(subscribe! ,filter ,sink ,name ,reply-sink ,reply-name)
-				 (if (rebind-node! filter
-						   #f
-						   route)
-				     (post! reply-sink reply-name `(subscribe-ok! ,filter))
-				     (report! `(rebind-failed ,command)))]
-				[`(unsubscribe! ,id)
-				 (when (not (rebind-node! id
-							  route
-							  #f))
-				   (report! `(rebind-failed ,command)))]
-				[`(post! ,name ,body ,token)
-				 (lookup-node name (lambda (node) (node body)))]
-				[_ (report! `(illegal-command ,command))])
-			      (loop))))))))
+		   (when (handle-inbound-command command in out route)
+		     (loop)))))))
 
 	  (rebind-node! localname
 			#f
