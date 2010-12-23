@@ -9,8 +9,9 @@
 
 (define (server portnumber)
   (let ((server-sock (tcp-listen portnumber 5 #t)))
+    (write `(listening on ,portnumber)) (newline)
     (let loop ()
       (let-values (((in out) (tcp-accept server-sock)))
-	(write `(accepted-connection)) (newline)
+	(write `(accepted-connection ,portnumber)) (newline)
 	(relay in out #f #f)
         (loop)))))
