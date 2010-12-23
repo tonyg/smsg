@@ -3,7 +3,7 @@
 (require "log.rkt")
 (require "directory.rkt")
 
-(provide post! unique-id)
+(provide unique-id post! send!)
 
 (define (unique-id prefix)
   (string->symbol (string-append (symbol->string prefix)
@@ -14,12 +14,15 @@
 				 (number->string (random #x10000) 16))))
 
 (define (post! sink name message [token #f])
-  ;;(write `(POSTING ,sink ,name ,message ,token))(newline)
+  (send! sink `(post! ,name ,message ,token)))
+
+(define (send! sink body)
+  ;; (write `(SENDING ,sink ,body)) (newline)
   (and sink
        (lookup-node sink
 		    (lambda (node)
-		      (node `(post! ,name ,message ,token))
+		      (node body)
 		      #t)
 		    (lambda ()
-		      (report! `(sink-not-found ,sink ,name ,message ,token))
+		      (report! `(sink-not-found ,sink ,body))
 		      #f))))

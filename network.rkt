@@ -55,6 +55,6 @@
 					 #f))
 		  (report! `(rebind-failed ,command)))]
 	       [`(post! ,name ,body ,token)
-		(lookup-node name (lambda (node) (node body)))]
+		(send! name body)]
 	       [_ (report! `(illegal-command ,command))])
 	     #t)))
