@@ -38,6 +38,7 @@ TBD.
  - doing things this way gives you shovels (relays) for free
  - and effortless interop with legacy messaging networks (including UDP, SMTP, IMAP, HTTP etc)
  - and effortless federation
+ - and a big step closer to a sensible semantics for transactions
 
  - relays (including active *client* connections!) are just nodes in
    the network, addressable like any other - so `(post! somerelay
