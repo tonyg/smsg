@@ -4,20 +4,22 @@
 
 (provide unique-id report! post! send!)
 
+(define (random-chunk)
+  (string->bytes/utf-8 (number->string (random #x10000) 16)))
+
 (define (unique-id prefix)
-  (string->symbol (string-append (symbol->string prefix)
-				 "-"
-				 (number->string (random #x10000) 16)
-				 (number->string (random #x10000) 16)
-				 (number->string (random #x10000) 16)
-				 (number->string (random #x10000) 16))))
+  (bytes-append prefix
+		#"-" (random-chunk)
+		#"-" (random-chunk)
+		#"-" (random-chunk)
+		#"-" (random-chunk)))
 
 (define (report! msg)
   (pretty-print msg)
   (void))
 
-(define (post! sink name message [token #f])
-  (send! sink `(post! ,name ,message ,token)))
+(define (post! sink name message [token #""])
+  (send! sink `(#"post" ,name ,message ,token)))
 
 (define (send! sink body)
   ;; (write `(SENDING ,sink ,body)) (newline)

@@ -4,13 +4,13 @@
 (require "network.rkt")
 (require "half-queue.rkt")
 
-(define k (half-queue 'k))
-(define c (half-queue 'consumer))
+(define k (half-queue #"k"))
+(define c (half-queue #"consumer"))
 
-(client 'server 'test1 "localhost" 5671)
-(post! 'server 'factory `(create! queue q1 test1 k))
+(client #"test1" "localhost" 5671)
+(post! #"smsg" #"factory" `(#"create" #"queue" (#"q1") #"test1" #"k"))
 (write (k)) (newline)
-(post! 'server 'q1 `(subscribe! #f test1 consumer test1 k))
+(post! #"smsg" #"q1" `(#"subscribe" #"" #"test1" #"consumer" #"test1" #"k"))
 (write (k)) (newline)
 
 (write `(first message is ,(c))) (newline)

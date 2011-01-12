@@ -22,13 +22,13 @@
 
   (define interpreter
     (match-lambda
-     [`(post! ,name ,body ,sender-token)
+     [`(#"post" ,name ,body ,sender-token)
       (let ((subs (call-with-semaphore
 		   mutex
 		   (lambda ()
 		     (hash-ref keys name (lambda () '()))))))
 	(for-each (lambda (sub) (send-to-sub! sub body)) subs))]
-     [`(subscribe! ,filter ,sink ,name ,reply-sink ,reply-name)
+     [`(#"subscribe" ,filter ,sink ,name ,reply-sink ,reply-name)
       (let* ((id (unique-id qname))
 	     (sub (subscription id filter sink name)))
 	(call-with-semaphore
@@ -37,8 +37,9 @@
 	   (hash-set! subscriptions id sub)
 	   (hash-set! keys filter
 		      (cons sub (hash-ref keys filter (lambda () '()))))
-	   (post! reply-sink reply-name `(subscribe-ok! ,id)))))]
-     [`(unsubscribe! ,id)
+	   (when (positive? (bytes-length reply-sink))
+	     (post! reply-sink reply-name `(#"subscribe-ok" ,id))))))]
+     [`(#"unsubscribe" ,id)
       (call-with-semaphore
        mutex
        (lambda ()
@@ -52,6 +53,6 @@
 
   interpreter)
 
-(register-object-class! 'direct-exchange
+(register-object-class! #"direct-exchange"
 			(lambda (arg)
 			  (rebind-node! (first arg) #f (direct-exchange))))

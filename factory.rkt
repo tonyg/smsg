@@ -12,16 +12,21 @@
 
 (define factory
   (match-lambda
-   [`(create! ,classname ,arg ,reply-sink ,reply-name)
+   [`(#"create" ,classname ,arg ,reply-sink ,reply-name)
     (cond
      ((hash-ref classes classname) =>
       (lambda (p)
-	(post! reply-sink reply-name `(create-complete! ,(p arg)))))
+	(let ((reply (p arg)))
+	  (write `(create reply is ,reply)) (newline)
+	  (when (positive? (bytes-length reply-sink))
+	    (post! reply-sink reply-name (if (eq? reply #t)
+					     `(#"create-ok")
+					     `(#"create-failed" ,reply)))))))
      (else
       (report! `(factory class-name-not-found ,classname ,arg))))]))
 
 (let ()
-  (rebind-node! 'factory
+  (rebind-node! #"factory"
 		#f
 		factory)
   (void))

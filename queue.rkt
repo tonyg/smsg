@@ -9,7 +9,8 @@
 
 (struct subscription (id sink name))
 
-(define (queue qname)
+(define (queue args)
+  (define qname (car args))
   (define mutex (make-semaphore 1))
   (define backlog (make-queue))
   (define waiters (make-queue))
@@ -51,13 +52,13 @@
 
   (define interpreter
     (match-lambda
-     [`(post! ,name ,body ,sender-token)
+     [`(#"post" ,name ,body ,sender-token)
       (call-with-semaphore
        mutex
        (lambda ()
 	 (enqueue! backlog body)
 	 (thread-send shovel-thread 'throck)))]
-     [`(subscribe! ,filter ,sink ,name ,reply-sink ,reply-name)
+     [`(#"subscribe" ,filter ,sink ,name ,reply-sink ,reply-name)
       (let* ((id (unique-id qname))
 	     (token (box (subscription id sink name))))
 	(call-with-semaphore
@@ -66,8 +67,9 @@
 	   (hash-set! subscriptions id token)
 	   (enqueue! waiters token)
 	   (thread-send shovel-thread 'throck)
-	   (post! reply-sink reply-name `(subscribe-ok! ,id)))))]
-     [`(unsubscribe! ,id)
+	   (when (positive? (bytes-length reply-sink))
+	     (post! reply-sink reply-name `(#"subscribe-ok" ,id))))))]
+     [`(#"unsubscribe" ,id)
       (call-with-semaphore
        mutex
        (lambda ()
@@ -76,6 +78,7 @@
 	     (hash-remove! subscriptions id)
 	     (set-box! token #f)))))]))
 
-  (rebind-node! qname #f interpreter))
+  (or (rebind-node! qname #f interpreter)
+      `#"name-in-use"))
 
-(register-object-class! 'queue queue)
+(register-object-class! #"queue" queue)
